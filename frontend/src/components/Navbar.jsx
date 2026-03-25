@@ -3,57 +3,82 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
 
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
-const MusicIcon = () => (
-  <svg className="w-[18px] h-[18px] fill-white" viewBox="0 0 24 24">
+const ACCENT = "#6c63ff";
+const NAVBAR_H = 64;
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const IcoMusic = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
     <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z" />
   </svg>
 );
-const HomeIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+const IcoHome = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
   </svg>
 );
-const SearchIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+const IcoSearch = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 );
-const LibraryIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+const IcoHeart = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+  </svg>
+);
+const IcoLibrary = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
     <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
   </svg>
 );
-const SettingsIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const IcoDownload = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M5 20h14v-2H5v2zm7-18v10.17l-3.59-3.58L7 10l5 5 5-5-1.41-1.41L13 12.17V2h-1z" />
+  </svg>
+);
+const IcoSettings = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
+const IcoSupport = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+  </svg>
+);
 
-// ─── Route Config ─────────────────────────────────────────────────────────────
-const NAV_LINKS = [
-  { label: "Favorite", href: "/favorite" },
-  { label: "Support",  href: "/support"  },
-  { label: "Download", href: "/download" },
+// ─── Link configs ─────────────────────────────────────────────────────────────
+const DESKTOP_LINKS = [
+  { label: "Favorite", href: "/favorite", Ico: IcoHeart },
+  { label: "Support",  href: "/support",  Ico: IcoSupport },
+  { label: "Download", href: "/download", Ico: IcoDownload },
 ];
 
 const MOBILE_LINKS = [
-  { label: "Home",     href: "/",         Icon: HomeIcon    },
-  { label: "Search",   href: "/search",   Icon: SearchIcon  },
-  { label: "Library",  href: "/library",  Icon: LibraryIcon },
-  { label: "Favorite", href: "/favorite", Icon: null        },
-  { label: "Support",  href: "/support",  Icon: null        },
-  { label: "Download", href: "/download", Icon: null        },
-  { label: "Settings", href: "/settings", Icon: SettingsIcon },
+  { label: "Home",     href: "/",         Ico: IcoHome },
+  { label: "Search",   href: "/search",   Ico: IcoSearch },
+  { label: "Library",  href: "/library",  Ico: IcoLibrary },
+  { label: "Favorite", href: "/favorite", Ico: IcoHeart },
+  { label: "Download", href: "/download", Ico: IcoDownload },
+  { label: "Support",  href: "/support",  Ico: IcoSupport },
+  { label: "Settings", href: "/settings", Ico: IcoSettings },
 ];
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
-export default function Navbar() {
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function Navbar({
+  onMobileLibraryOpen,
+  playlists = [],
+  favorites = [],
+  uploadCount = 0,
+  onUpload,
+  fileRef,
+  onNewPlaylist,
+}) {
   const location  = useLocation();
   const navigate  = useNavigate();
-
-  // ── Auth state ─────────────────────────────────────────────────────────
   const { user, loading: authLoading } = useAuth();
   const isLoggedIn = !!user;
 
@@ -62,40 +87,40 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
   const hamRef  = useRef(null);
-
   const path = location.pathname;
 
-  // Scroll shadow
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 6);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  // Close menu on route change
   useEffect(() => { setMenuOpen(false); }, [path]);
 
-  // Close menu on outside click
   useEffect(() => {
-    const handler = (e) => {
+    const fn = (e) => {
       if (
+        menuOpen &&
         menuRef.current && !menuRef.current.contains(e.target) &&
         hamRef.current  && !hamRef.current.contains(e.target)
       ) setMenuOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, [menuOpen]);
 
-  // Close menu on Escape
   useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") setMenuOpen(false); };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    const fn = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    document.addEventListener("keydown", fn);
+    return () => document.removeEventListener("keydown", fn);
   }, []);
 
-  const isActive = (href) =>
-    href === "/" ? path === "/" : path.startsWith(href);
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  const active = (href) => (href === "/" ? path === "/" : path.startsWith(href));
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -104,218 +129,363 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ══════════════ NAVBAR ══════════════ */}
-      <nav
-        className={[
-          "fixed top-0 left-0 right-0 z-50",
-          "h-16 flex items-center gap-3 px-5",
-          "border-b border-white/[0.07]",
-          "transition-all duration-300",
-          scrolled
-            ? "bg-[#0a0c12]/95 backdrop-blur-2xl shadow-[0_4px_40px_rgba(0,0,0,0.4)]"
-            : "bg-[#0a0c12]/80 backdrop-blur-xl",
-        ].join(" ")}
-      >
-        {/* ── Logo ── */}
-        <Link
-          to="/"
-          className="flex items-center gap-2.5 shrink-0 group select-none"
-          aria-label="SoundWave Home"
-        >
-          <div className="w-[34px] h-[34px] rounded-[9px] bg-gradient-to-br from-[#6c63ff] to-[#ff4d6d] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200">
-            <MusicIcon />
+      <NavCSS />
+
+      {/* ══ NAVBAR BAR ══ */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
+        height: NAVBAR_H,
+        display: "flex", alignItems: "center",
+        padding: "0 20px", gap: 0,
+        background: scrolled ? "rgba(7,8,14,0.97)" : "rgba(7,8,14,0.88)",
+        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        boxShadow: scrolled ? "0 2px 30px rgba(0,0,0,0.6)" : "none",
+        transition: "background 0.3s, box-shadow 0.3s",
+        fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif",
+      }}>
+
+        {/* Logo */}
+        <Link to="/" className="nb-logo" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", flexShrink: 0, marginRight: 16 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+            background: "linear-gradient(135deg,#6c63ff,#ff4d6d)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 3px 14px rgba(108,99,255,0.45)",
+          }}>
+            <IcoMusic />
           </div>
-          <span className="font-extrabold text-[18px] tracking-tight text-white/90 hidden sm:block">
-            Sound<span className="text-[#6c63ff]">Wave</span>
+          <span className="nb-logo-text" style={{
+            fontWeight: 800, fontSize: 18, color: "rgba(255,255,255,0.93)",
+            letterSpacing: "-0.3px",
+          }}>
+            Sound<span style={{ color: ACCENT }}>Wave</span>
           </span>
         </Link>
 
-        {/* ── Center: Home + Search ── */}
-        <div className="flex-1 flex items-center justify-center gap-2 max-w-[520px] mx-auto">
-          <Link
-            to="/"
-            aria-label="Home"
-            className={[
-              "w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0 border transition-all duration-200",
-              isActive("/") && path === "/"
-                ? "text-[#6c63ff] bg-[#6c63ff]/10 border-[#6c63ff]/40"
-                : "text-gray-500 bg-transparent border-white/10 hover:text-white hover:bg-white/[0.07] hover:border-white/20",
-            ].join(" ")}
-          >
-            <HomeIcon className="w-[18px] h-[18px]" />
+        {/* Search bar — desktop only */}
+        <div className="nb-search" style={{
+          display: "flex", alignItems: "center", gap: 8,
+          width: 390, flexShrink: 0, marginRight: 12,
+        }}>
+          <Link to="/" title="Home" className="nb-icon-btn" style={{
+            width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            border: `1px solid ${active("/") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
+            background: active("/") ? ACCENT + "18" : "rgba(255,255,255,0.03)",
+            color: active("/") ? ACCENT : "rgba(255,255,255,0.4)",
+            textDecoration: "none",
+          }}>
+            <IcoHome />
           </Link>
-
-          <div
-            className={[
-              "flex-1 h-[38px] flex items-center gap-2 px-3.5 rounded-full border transition-all duration-200",
-              path === "/search"
-                ? "bg-[#6c63ff]/[0.07] border-[#6c63ff]/50"
-                : "bg-white/[0.05] border-white/10 hover:border-white/20 hover:bg-white/[0.07]",
-            ].join(" ")}
-          >
-            <SearchIcon className="w-[15px] h-[15px] text-gray-500 shrink-0" />
+          <div style={{
+            flex: 1, height: 36, display: "flex", alignItems: "center", gap: 8,
+            padding: "0 14px", borderRadius: 100,
+            border: `1px solid ${path === "/search" ? ACCENT + "60" : "rgba(255,255,255,0.1)"}`,
+            background: path === "/search" ? ACCENT + "0d" : "rgba(255,255,255,0.04)",
+            cursor: "text",
+          }} onClick={() => { if (path !== "/search") navigate("/search"); }}>
+            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}><IcoSearch /></span>
             <input
               type="text"
               value={search}
               onChange={handleSearch}
               onFocus={() => { if (path !== "/search") navigate("/search"); }}
-              placeholder="What do you want to play?"
-              className="bg-transparent border-none outline-none text-white text-[13.5px] w-full placeholder:text-gray-600 font-[inherit]"
-              aria-label="Search songs"
+              placeholder="Search songs, artists..."
+              style={{
+                flex: 1, background: "none", border: "none", outline: "none",
+                color: "#fff", fontSize: 13,
+                fontFamily: "inherit",
+              }}
             />
           </div>
         </div>
 
-        {/* ── Right: Links + Settings + Auth / Profile ── */}
-        <div className="hidden md:flex items-center gap-1 shrink-0">
-          {NAV_LINKS.map(({ label, href }) => (
-            <Link
-              key={href}
-              to={href}
-              className={[
-                "text-[13px] font-medium px-2.5 py-1.5 rounded-lg transition-all duration-150",
-                isActive(href)
-                  ? "text-[#6c63ff] bg-[#6c63ff]/10"
-                  : "text-gray-500 hover:text-white hover:bg-white/[0.06]",
-              ].join(" ")}
-            >
+        {/* Spacer */}
+        <div className="nb-spacer" style={{ flex: 1 }} />
+
+        {/* Desktop right section */}
+        <div className="nb-desktop" style={{
+          display: "flex", alignItems: "center", gap: 2, flexShrink: 0,
+        }}>
+          {DESKTOP_LINKS.map(({ label, href, Ico }) => (
+            <Link key={href} to={href} className="nb-link" style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "6px 11px", borderRadius: 8,
+              fontSize: 13, fontWeight: 500, textDecoration: "none",
+              color: active(href) ? ACCENT : "rgba(255,255,255,0.5)",
+              background: active(href) ? ACCENT + "14" : "transparent",
+              whiteSpace: "nowrap",
+            }}>
+              <span style={{ display: "flex", opacity: 0.75 }}><Ico /></span>
               {label}
             </Link>
           ))}
 
-          <div className="w-px h-[22px] bg-white/[0.08] mx-1" />
+          <div style={{ width: 1, height: 22, background: "rgba(255,255,255,0.08)", margin: "0 8px" }} />
 
-          <Link
-            to="/settings"
-            aria-label="Settings"
-            className={[
-              "w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200",
-              isActive("/settings")
-                ? "text-[#6c63ff] bg-[#6c63ff]/10 border-[#6c63ff]/40"
-                : "text-gray-500 border-white/10 hover:text-white hover:bg-white/[0.07]",
-            ].join(" ")}
-          >
-            <SettingsIcon className="w-4 h-4" />
+          <Link to="/settings" className="nb-icon-btn" title="Settings" style={{
+            width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            border: `1px solid ${active("/settings") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
+            background: active("/settings") ? ACCENT + "18" : "rgba(255,255,255,0.03)",
+            color: active("/settings") ? ACCENT : "rgba(255,255,255,0.4)",
+            textDecoration: "none",
+          }}>
+            <IcoSettings />
           </Link>
 
-          {/* ── Auth: show profile dropdown if logged in, else Sign up/Log in ── */}
           {!authLoading && (
-            isLoggedIn ? (
-              // ✅ Logged-in state
-              <div className="ml-1">
-                <ProfileDropdown />
-              </div>
-            ) : (
-              // 🔓 Guest state
-              <>
-                <Link
-                  to="/signup"
-                  className="ml-1 text-[13px] font-semibold px-4 py-[7px] rounded-full border border-white/[0.15] text-white hover:border-[#6c63ff] hover:text-[#6c63ff] transition-all duration-200 whitespace-nowrap"
-                >
-                  Sign up
-                </Link>
-                <Link
-                  to="/login"
-                  className="text-[13px] font-bold px-[18px] py-[7px] rounded-full bg-[#6c63ff] text-white hover:bg-[#7c74ff] hover:-translate-y-px active:translate-y-0 transition-all duration-200 whitespace-nowrap"
-                >
-                  Log in
-                </Link>
-              </>
-            )
+            isLoggedIn
+              ? <div style={{ marginLeft: 8 }}><ProfileDropdown /></div>
+              : <div style={{ display: "flex", gap: 8, marginLeft: 8 }}>
+                  <Link to="/signup" className="nb-signup" style={{
+                    padding: "7px 16px", borderRadius: 100,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600,
+                    textDecoration: "none", whiteSpace: "nowrap",
+                  }}>Sign up</Link>
+                  <Link to="/login" className="nb-login" style={{
+                    padding: "7px 18px", borderRadius: 100,
+                    background: ACCENT, color: "#fff",
+                    fontSize: 13, fontWeight: 700,
+                    textDecoration: "none", whiteSpace: "nowrap",
+                    boxShadow: `0 4px 16px ${ACCENT}50`,
+                  }}>Log in</Link>
+                </div>
           )}
         </div>
 
-        {/* ── Hamburger (mobile) ── */}
+        {/* ── Hamburger — mobile only ── */}
         <button
           ref={hamRef}
-          onClick={() => setMenuOpen((o) => !o)}
+          onClick={() => setMenuOpen(o => !o)}
+          className="nb-ham"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          className={[
-            "md:hidden ml-auto w-[38px] h-[38px] rounded-full flex flex-col items-center justify-center gap-[4px]",
-            "border transition-all duration-200 shrink-0",
-            menuOpen
-              ? "bg-white/[0.08] border-white/20 text-white"
-              : "bg-white/[0.04] border-white/10 text-gray-500 hover:text-white hover:bg-white/[0.07]",
-          ].join(" ")}
+          style={{
+            flexShrink: 0, marginLeft: "auto",
+            width: 40, height: 40, borderRadius: 10, padding: 0,
+            display: "none", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", gap: 5,
+            background: menuOpen ? `${ACCENT}18` : "rgba(255,255,255,0.05)",
+            border: `1px solid ${menuOpen ? ACCENT + "50" : "rgba(255,255,255,0.1)"}`,
+            cursor: "pointer",
+          }}
         >
-          <span className={["block w-4 h-[1.5px] bg-current rounded-full origin-center transition-all duration-300", menuOpen ? "translate-y-[5.5px] rotate-45" : ""].join(" ")} />
-          <span className={["block w-4 h-[1.5px] bg-current rounded-full transition-all duration-300", menuOpen ? "opacity-0 scale-x-0" : ""].join(" ")} />
-          <span className={["block w-4 h-[1.5px] bg-current rounded-full origin-center transition-all duration-300", menuOpen ? "-translate-y-[5.5px] -rotate-45" : ""].join(" ")} />
+          <span style={{
+            display: "block", width: 18, height: 1.5,
+            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+            borderRadius: 2,
+            transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none",
+            transition: "transform 0.27s ease, background 0.2s",
+          }} />
+          <span style={{
+            display: "block", width: 18, height: 1.5,
+            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+            borderRadius: 2,
+            opacity: menuOpen ? 0 : 1,
+            transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
+            transition: "opacity 0.2s, transform 0.2s",
+          }} />
+          <span style={{
+            display: "block", width: 18, height: 1.5,
+            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+            borderRadius: 2,
+            transform: menuOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
+            transition: "transform 0.27s ease, background 0.2s",
+          }} />
         </button>
       </nav>
 
-      {/* ══════════════ MOBILE MENU ══════════════ */}
+      {/* ══ BACKDROP ══ */}
       <div
         onClick={() => setMenuOpen(false)}
-        className={[
-          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden transition-opacity duration-300",
-          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
-        ].join(" ")}
-        aria-hidden="true"
+        className="nb-backdrop"
+        style={{
+          position: "fixed", inset: 0, zIndex: 998,
+          background: "rgba(0,0,0,0.65)",
+          backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
+          opacity: menuOpen ? 1 : 0,
+          pointerEvents: menuOpen ? "auto" : "none",
+          transition: "opacity 0.25s",
+          display: "none",
+        }}
       />
 
+      {/* ══ MOBILE MENU ══ */}
       <div
         ref={menuRef}
-        className={[
-          "fixed top-16 left-0 right-0 z-40 md:hidden",
-          "bg-[#0e1017] border-b border-white/[0.07]",
-          "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          menuOpen
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 -translate-y-3 pointer-events-none",
-        ].join(" ")}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Navigation menu"
+        className="nb-menu"
+        style={{
+          position: "fixed",
+          top: NAVBAR_H, left: 0, right: 0,
+          zIndex: 999,
+          background: "#0b0d16",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          maxHeight: `calc(100dvh - ${NAVBAR_H}px)`,
+          overflowY: "auto",
+          transform: menuOpen ? "translateY(0)" : "translateY(-10px)",
+          opacity: menuOpen ? 1 : 0,
+          pointerEvents: menuOpen ? "auto" : "none",
+          transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.22s",
+          display: "none",
+          fontFamily: "'Segoe UI', system-ui, sans-serif",
+        }}
       >
-        <div className="px-4 py-3 flex flex-col gap-0.5">
-          {MOBILE_LINKS.map(({ label, href, Icon: IconComp }) => (
+        {/* Mobile search */}
+        <div style={{ padding: "14px 14px 8px" }}>
+          <div style={{
+            height: 42, display: "flex", alignItems: "center", gap: 10,
+            padding: "0 14px", borderRadius: 100,
+            border: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(255,255,255,0.04)",
+          }}>
+            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}><IcoSearch /></span>
+            <input
+              type="text"
+              value={search}
+              onChange={handleSearch}
+              onFocus={() => { navigate("/search"); setMenuOpen(false); }}
+              placeholder="Search songs, artists..."
+              style={{
+                flex: 1, background: "none", border: "none", outline: "none",
+                color: "#fff", fontSize: 14, fontFamily: "inherit",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Nav links */}
+        <div style={{ padding: "4px 10px" }}>
+          {MOBILE_LINKS.map(({ label, href, Ico }) => (
             <Link
               key={href}
               to={href}
-              className={[
-                "flex items-center gap-3 px-3.5 py-[11px] rounded-xl text-[14px] font-medium transition-all duration-150",
-                isActive(href)
-                  ? "text-[#6c63ff] bg-[#6c63ff]/10"
-                  : "text-gray-500 hover:text-white hover:bg-white/[0.06]",
-              ].join(" ")}
+              onClick={() => setMenuOpen(false)}
+              className="nb-mlink"
+              style={{
+                display: "flex", alignItems: "center", gap: 12,
+                padding: "10px 12px", borderRadius: 12,
+                fontSize: 14, fontWeight: 500, textDecoration: "none",
+                color: active(href) ? ACCENT : "rgba(255,255,255,0.65)",
+                background: active(href) ? `${ACCENT}12` : "transparent",
+                marginBottom: 2,
+              }}
             >
-              {IconComp && (
-                <IconComp className={["w-[17px] h-[17px] shrink-0", isActive(href) ? "text-[#6c63ff]" : "text-current"].join(" ")} />
+              <span style={{
+                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: active(href) ? `${ACCENT}22` : "rgba(255,255,255,0.06)",
+                color: active(href) ? ACCENT : "rgba(255,255,255,0.4)",
+              }}>
+                <Ico />
+              </span>
+              <span>{label}</span>
+              {active(href) && (
+                <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: ACCENT, flexShrink: 0 }} />
               )}
-              {label}
             </Link>
           ))}
+        </div>
 
-          <div className="h-px bg-white/[0.07] my-2" />
+        {/* Divider */}
+        <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "6px 14px" }} />
 
-          {/* Mobile auth section */}
-          {isLoggedIn ? (
-            <Link
-              to="/profile"
-              className="flex items-center gap-3 px-3.5 py-[11px] rounded-xl text-[14px] font-medium text-gray-500 hover:text-white hover:bg-white/[0.06] transition-all duration-150"
-            >
-              My Profile
-            </Link>
-          ) : (
-            <div className="flex gap-2 pt-1 pb-2">
-              <Link
-                to="/signup"
-                className="flex-1 text-center text-[13px] font-semibold py-2.5 rounded-full border border-white/[0.15] text-white hover:border-[#6c63ff] hover:text-[#6c63ff] transition-all duration-200"
-              >
-                Sign up
-              </Link>
-              <Link
-                to="/login"
-                className="flex-1 text-center text-[13px] font-bold py-2.5 rounded-full bg-[#6c63ff] text-white hover:bg-[#7c74ff] transition-all duration-200"
-              >
-                Log in
-              </Link>
-            </div>
+        {/* Auth */}
+        <div style={{ padding: "8px 14px 20px" }}>
+          {!authLoading && (
+            isLoggedIn
+              ? (
+                <Link to="/profile" onClick={() => setMenuOpen(false)} style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  padding: "11px 14px", borderRadius: 12,
+                  fontSize: 14, fontWeight: 500,
+                  color: "rgba(255,255,255,0.65)",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  textDecoration: "none",
+                }}>
+                  👤 My Profile
+                </Link>
+              )
+              : (
+                <div style={{ display: "flex", gap: 10 }}>
+                  <Link to="/signup" onClick={() => setMenuOpen(false)} className="nb-signup" style={{
+                    flex: 1, textAlign: "center", padding: "11px", borderRadius: 100,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600,
+                    textDecoration: "none",
+                  }}>Sign up</Link>
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="nb-login" style={{
+                    flex: 1, textAlign: "center", padding: "11px", borderRadius: 100,
+                    background: ACCENT, color: "#fff",
+                    fontSize: 13, fontWeight: 700, textDecoration: "none",
+                    boxShadow: `0 4px 16px ${ACCENT}50`,
+                  }}>Log in</Link>
+                </div>
+              )
           )}
         </div>
       </div>
+
+      <NavCSS />
     </>
+  );
+}
+
+function NavCSS() {
+  return (
+    <style>{`
+      /* ── hover states ── */
+      .nb-logo:hover > div { transform: scale(1.06) rotate(-2deg); }
+      .nb-link:hover  { color: #fff !important; background: rgba(255,255,255,0.07) !important; }
+      .nb-icon-btn:hover { color: #fff !important; background: rgba(255,255,255,0.09) !important; border-color: rgba(255,255,255,0.22) !important; }
+      .nb-signup:hover { border-color: ${ACCENT} !important; color: ${ACCENT} !important; }
+      .nb-login:hover  { filter: brightness(1.15); transform: translateY(-1px); }
+      .nb-mlink:hover  { color: #fff !important; background: rgba(255,255,255,0.06) !important; }
+      .nb-ham:hover    { background: rgba(255,255,255,0.08) !important; }
+
+      /* ── transitions ── */
+      .nb-logo > div, .nb-link, .nb-icon-btn, .nb-signup, .nb-login, .nb-mlink, .nb-ham {
+        transition: all 0.18s ease;
+      }
+
+      /* ── input resets ── */
+      input::placeholder { color: rgba(255,255,255,0.22) !important; }
+      input:focus { outline: none !important; box-shadow: none !important; }
+
+      /* ── scrollbar ── */
+      .nb-menu::-webkit-scrollbar { width: 3px; }
+      .nb-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+      /* ────────────────────────────────────
+         RESPONSIVE — this is the key part
+      ──────────────────────────────────── */
+
+      /* DESKTOP: show desktop items */
+      @media (min-width: 768px) {
+        .nb-ham      { display: none !important; }
+        .nb-backdrop { display: none !important; }
+        .nb-menu     { display: none !important; }
+        .nb-desktop  { display: flex !important; }
+        .nb-search   { display: flex !important; }
+        .nb-spacer   { display: block !important; }
+      }
+
+      /* MOBILE: show hamburger, hide desktop */
+      @media (max-width: 767px) {
+        .nb-ham      { display: flex !important; }
+        .nb-backdrop { display: block !important; }
+        .nb-menu     { display: block !important; }
+        .nb-desktop  { display: none !important; }
+        .nb-search   { display: none !important; }
+        .nb-spacer   { display: none !important; }
+      }
+
+      /* Tiny screens — hide logo text */
+      @media (max-width: 380px) {
+        .nb-logo-text { display: none !important; }
+      }
+    `}</style>
   );
 }

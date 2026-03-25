@@ -1,37 +1,51 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 
 const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+  const pendingIds = useRef(new Set()); // track active toast messages
 
   const showToast = useCallback((message, type = "error") => {
-    const id = Date.now();
+    // Deduplicate: if same message is already visible, don't add again
+    if (pendingIds.current.has(message)) return;
+
+    pendingIds.current.add(message);
+    const id = `${Date.now()}-${Math.random()}`; // truly unique id
     setToasts((prev) => [...prev, { id, message, type }]);
+
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
+      pendingIds.current.delete(message);
     }, 3500);
   }, []);
 
-  const removeToast = useCallback((id) => {
+  const removeToast = useCallback((id, message) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
+    pendingIds.current.delete(message);
   }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-
-      {/* ── Toast Container ── */}
-      <div style={{
-        position: "fixed",
-        top: 96,
-        right: 16,
-        zIndex: 9999,
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        pointerEvents: "none",
-      }}>
+      <div
+        style={{
+          position: "fixed",
+          top: 96,
+          right: 16,
+          zIndex: 9999,
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          pointerEvents: "none",
+        }}
+      >
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
         ))}
@@ -41,24 +55,20 @@ export function ToastProvider({ children }) {
 }
 
 function ToastItem({ toast, onRemove }) {
-  const isError   = toast.type === "error";
+  const isError = toast.type === "error";
   const isSuccess = toast.type === "success";
-  const isInfo    = toast.type === "info";
 
   const bgColor = isError
     ? "rgba(255,77,109,0.12)"
     : isSuccess
-    ? "rgba(34,197,94,0.12)"
-    : "rgba(108,99,255,0.12)";
-
+      ? "rgba(34,197,94,0.12)"
+      : "rgba(108,99,255,0.12)";
   const borderColor = isError
     ? "rgba(255,77,109,0.35)"
     : isSuccess
-    ? "rgba(34,197,94,0.35)"
-    : "rgba(108,99,255,0.35)";
-
+      ? "rgba(34,197,94,0.35)"
+      : "rgba(108,99,255,0.35)";
   const textColor = isError ? "#ff4d6d" : isSuccess ? "#22c55e" : "#6c63ff";
-
   const icon = isError ? "🔒" : isSuccess ? "✓" : "ℹ";
 
   return (
@@ -86,23 +96,31 @@ function ToastItem({ toast, onRemove }) {
           to   { opacity: 1; transform: translateX(0)    scale(1);    }
         }
       `}</style>
-
       <span style={{ fontSize: 16 }}>{icon}</span>
-
-      <p style={{
-        margin: 0, flex: 1,
-        fontSize: 13, fontWeight: 600,
-        color: textColor, lineHeight: 1.4,
-      }}>
+      <p
+        style={{
+          margin: 0,
+          flex: 1,
+          fontSize: 13,
+          fontWeight: 600,
+          color: textColor,
+          lineHeight: 1.4,
+        }}
+      >
         {toast.message}
       </p>
-
       <button
-        onClick={() => onRemove(toast.id)}
+        onClick={() => onRemove(toast.id, toast.message)}
         style={{
-          background: "none", border: "none", cursor: "pointer",
-          color: textColor, opacity: 0.6, fontSize: 16,
-          padding: 0, lineHeight: 1, flexShrink: 0,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          color: textColor,
+          opacity: 0.6,
+          fontSize: 16,
+          padding: 0,
+          lineHeight: 1,
+          flexShrink: 0,
         }}
       >
         ✕

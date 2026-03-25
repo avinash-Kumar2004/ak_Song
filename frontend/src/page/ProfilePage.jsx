@@ -1,269 +1,285 @@
-// frontend/src/page/ProfilePage.jsx
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { userAPI } from "../api";
-function initials(name = "") {
-  return name.trim().split(" ").map((w) => w[0]?.toUpperCase()).slice(0, 2).join("");
-}
-
-function Tab({ active, onClick, children }) {
-  return (
-    <button
-      onClick={onClick}
-      className={[
-        "pb-3 px-1 text-sm font-semibold border-b-2 -mb-px transition-all duration-150",
-        active ? "border-[#6c63ff] text-[#6c63ff]" : "border-transparent text-gray-500 hover:text-gray-300",
-      ].join(" ")}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Field({ label, children, hint }) {
-  return (
-    <div>
-      <label className="block text-xs font-semibold text-gray-400 mb-1.5">{label}</label>
-      {children}
-      {hint && <p className="text-xs text-gray-600 mt-1">{hint}</p>}
-    </div>
-  );
-}
-
-function Alert({ msg }) {
-  if (!msg) return null;
-  return (
-    <div className={[
-      "text-sm px-4 py-2.5 rounded-xl mb-5",
-      msg.type === "success"
-        ? "bg-green-900/30 text-green-300 border border-green-700/30"
-        : "bg-red-900/30 text-red-300 border border-red-700/30",
-    ].join(" ")}>
-      {msg.text}
-    </div>
-  );
-}
+import { useApp  } from "../context/AppContext";
 
 export default function ProfilePage() {
-  const { user, updateUser, logout } = useAuth();
   const navigate = useNavigate();
-  const fileRef  = useRef(null);
+  const auth     = useAuth?.();
+  const user     = auth?.user;
+  const { accent, isDark, profileImage, setProfileImage, displayName, setDisplayName } = useApp();
 
-  const [tab,       setTab]       = useState("info");
-  const [uploading, setUploading] = useState(false);
-  const [saving,    setSaving]    = useState(false);
-  const [msg,       setMsg]       = useState(null);
+  const bg = isDark ? "#0a0c12" : "#f0f2f5";
 
-  const [name, setName] = useState(user?.name || "");
-  const [bio,  setBio]  = useState(user?.bio  || "");
-  const [curPwd,  setCurPwd]  = useState("");
-  const [newPwd,  setNewPwd]  = useState("");
-  const [confPwd, setConfPwd] = useState("");
+  const [name,       setName]       = useState(user?.displayName || displayName || "");
+  const [email,      setEmail]      = useState(user?.email || "");
+  const [bio,        setBio]        = useState(() => localStorage.getItem("sw_bio") ?? "");
+  const [imgPreview, setImgPreview] = useState(profileImage || null);
+  const [saving,     setSaving]     = useState(false);
+  const [toast,      setToast]      = useState(null);
+  const [errors,     setErrors]     = useState({});
+  const fileRef = useRef(null);
 
-  const flash = (type, text) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 3500);
+  const showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2500);
   };
 
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return flash("error", "Only image files allowed.");
-    if (file.size > 5 * 1024 * 1024)    return flash("error", "Image must be under 5 MB.");
-    const formData = new FormData();
-    formData.append("avatar", file);
-    setUploading(true);
-    try {
-      const { data } = await userAPI.uploadAvatar(formData);
-      updateUser?.(data.data.user);
-      flash("success", "Avatar updated!");
-    } catch (err) {
-      flash("error", err.message);
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
+    if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", "error"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setImgPreview(ev.target.result);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleSaveInfo = async (e) => {
-    e.preventDefault();
-    if (!name.trim()) return flash("error", "Name cannot be empty.");
+  const validate = () => {
+    const errs = {};
+    if (!name.trim())           errs.name  = "Display name is required";
+    if (!email.trim())          errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Enter a valid email";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validate()) return;
     setSaving(true);
+    // Simulate async save
+    await new Promise(r => setTimeout(r, 800));
+    // Persist to AppContext + localStorage
+    setDisplayName(name);
+    setProfileImage(imgPreview);
+    localStorage.setItem("sw_bio", bio);
+    // Try to update Firebase user if available
     try {
-      const { data } = await userAPI.updateProfile({ name: name.trim(), bio: bio.trim() });
-      updateUser?.(data.data.user);
-      flash("success", "Profile updated!");
-    } catch (err) {
-      flash("error", err.message);
-    } finally {
-      setSaving(false);
-    }
+      if (auth?.updateProfile) await auth.updateProfile({ displayName: name });
+    } catch {}
+    setSaving(false);
+    showToast("Profile updated!");
   };
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (!curPwd || !newPwd || !confPwd) return flash("error", "All fields are required.");
-    if (newPwd.length < 8)              return flash("error", "New password must be at least 8 characters.");
-    if (newPwd !== confPwd)             return flash("error", "Passwords do not match.");
-    setSaving(true);
-    try {
-      await userAPI.changePassword({ currentPassword: curPwd, newPassword: newPwd });
-      flash("success", "Password changed! Logging out…");
-      setCurPwd(""); setNewPwd(""); setConfPwd("");
-      setTimeout(async () => { await logout?.(); navigate("/login"); }, 2000);
-    } catch (err) {
-      flash("error", err.message);
-    } finally {
-      setSaving(false);
-    }
+  const handleRemovePhoto = () => {
+    setImgPreview(null);
+    setProfileImage(null);
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure? This cannot be undone.")) return;
-    try {
-      await fetch("/api/users/me", {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("sw_token")}` },
-      });
-      await logout?.();
-      navigate("/");
-    } catch {
-      flash("error", "Failed to delete account.");
-    }
-  };
+  const avatar = (name?.[0] || user?.email?.[0] || "U").toUpperCase();
 
-  const avatarUrl = user?.avatar?.url;
+  const inputStyle = (err) => ({
+    width: "100%", padding: "11px 14px", borderRadius: 10, fontSize: 14,
+    border: `1.5px solid ${err ? "#ff4d6d" : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)"}`,
+    background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+    color: isDark ? "#f0f0f0" : "#111",
+    outline: "none", boxSizing: "border-box",
+    transition: "border-color 0.2s",
+    fontFamily: "inherit",
+  });
+
+  const labelStyle = {
+    fontSize: 12, fontWeight: 600, color: isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+    letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6, display: "block",
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0c12] pt-24 pb-16 px-4">
-      <div className="max-w-2xl mx-auto">
+    <>
+      <style>{`
+        @keyframes pfSlide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+        @keyframes pfToast { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+        .pf-input:focus { border-color: ${accent} !important; box-shadow: 0 0 0 3px ${accent}22; }
+        .pf-btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+        .pf-btn-save:active { transform: translateY(0); }
+      `}</style>
 
-        {/* Back */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-500 hover:text-white text-sm mb-6 transition-colors group"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-            className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          Back
-        </button>
+      <div style={{ minHeight: "100vh", background: bg, paddingTop: 80, paddingBottom: 60,
+        fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "0 16px" }}>
 
-        <div className="bg-[#0e1017] border border-white/[0.07] rounded-2xl overflow-hidden shadow-2xl">
+          {/* Back button */}
+          <button onClick={() => navigate("/settings")}
+            style={{ display:"flex", alignItems:"center", gap:6, background:"none",
+              border:"none", cursor:"pointer", color:isDark?"rgba(255,255,255,0.4)":"rgba(0,0,0,0.4)",
+              fontSize:13, marginBottom:24, padding:0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Back to Settings
+          </button>
 
-          {/* Banner */}
-          <div className="relative h-28 bg-gradient-to-r from-[#6c63ff]/40 via-[#8b5cf6]/30 to-[#ff4d6d]/30">
-            <div className="absolute top-2 left-8 w-16 h-16 rounded-full bg-[#6c63ff]/20 blur-2xl" />
-            <div className="absolute bottom-0 right-12 w-20 h-20 rounded-full bg-[#ff4d6d]/15 blur-2xl" />
+          {/* Header */}
+          <div style={{ marginBottom: 28 }}>
+            <h1 style={{ fontSize: 26, fontWeight: 800,
+              color: isDark ? "#f0f0f0" : "#111", letterSpacing: "-0.5px", margin: 0 }}>
+              Edit Profile
+            </h1>
+            <p style={{ color: isDark ? "rgba(255,255,255,0.38)" : "rgba(0,0,0,0.45)",
+              fontSize: 14, margin: "4px 0 0" }}>
+              Update your personal information
+            </p>
+          </div>
 
-            {/* Avatar */}
-            <div className="absolute -bottom-10 left-6">
-              <div className="relative cursor-pointer group" onClick={() => fileRef.current?.click()} title="Change photo">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={user?.name}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-[#0e1017] group-hover:border-[#6c63ff]/50 transition-all" />
+          {/* Avatar section */}
+          <div style={{ background: isDark ? "#13151f" : "#fff",
+            borderRadius: 20, border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)"}`,
+            padding: 24, marginBottom: 16, display: "flex", alignItems: "center", gap: 20,
+            animation: "pfSlide 0.3s ease" }}>
+            {/* Avatar preview */}
+            <div style={{ position: "relative", flexShrink: 0 }}>
+              <div style={{ width: 88, height: 88, borderRadius: "50%", overflow: "hidden",
+                boxShadow: `0 0 0 3px ${bg}, 0 0 0 5px ${accent}66` }}>
+                {imgPreview ? (
+                  <img src={imgPreview} alt="profile"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#6c63ff] to-[#ff4d6d] flex items-center justify-center text-2xl font-bold text-white border-4 border-[#0e1017] group-hover:border-[#6c63ff]/50 transition-all select-none">
-                    {initials(user?.name) || "?"}
-                  </div>
+                  <div style={{ width: "100%", height: "100%",
+                    background: `linear-gradient(135deg, ${accent}, #ff4d6d)`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 34, fontWeight: 800, color: "#fff" }}>{avatar}</div>
                 )}
-                <div className="absolute bottom-0 right-0 w-6 h-6 bg-[#6c63ff] rounded-full flex items-center justify-center border-2 border-[#0e1017] shadow-lg">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                </div>
               </div>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-            </div>
-          </div>
-
-          {/* User info */}
-          <div className="pt-14 px-6 pb-2">
-            <p className="text-lg font-bold text-white">{user?.name}</p>
-            <p className="text-sm text-gray-500">{user?.email}</p>
-            {uploading
-              ? <p className="text-xs text-[#6c63ff] mt-1 animate-pulse">Uploading avatar…</p>
-              : <p className="text-xs text-gray-600 mt-1">Click avatar to change photo</p>
-            }
-          </div>
-
-          {/* Tabs + Forms */}
-          <div className="px-6 pb-6">
-            <Alert msg={msg} />
-
-            <div className="flex gap-5 border-b border-white/[0.07] mb-6">
-              <Tab active={tab === "info"}     onClick={() => setTab("info")}>Profile Info</Tab>
-              <Tab active={tab === "password"} onClick={() => setTab("password")}>Password</Tab>
+              {/* Camera overlay */}
+              <button onClick={() => fileRef.current?.click()}
+                style={{ position: "absolute", bottom: 0, right: 0,
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: accent, border: `2px solid ${bg}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", outline: "none" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff">
+                  <path d="M12 15.2A3.2 3.2 0 0 1 8.8 12 3.2 3.2 0 0 1 12 8.8 3.2 3.2 0 0 1 15.2 12 3.2 3.2 0 0 1 12 15.2M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/>
+                </svg>
+              </button>
             </div>
 
-            {/* Info Tab */}
-            {tab === "info" && (
-              <form onSubmit={handleSaveInfo} className="flex flex-col gap-4">
-                <Field label="Full Name">
-                  <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#6c63ff]/60 transition-all" />
-                </Field>
-
-                <Field label="Email" hint="Email cannot be changed.">
-                  <input value={user?.email || ""} readOnly
-                    className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed" />
-                </Field>
-
-                {user?.phone && (
-                  <Field label="Phone">
-                    <input value={user.phone} readOnly
-                      className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed" />
-                  </Field>
-                )}
-
-                <Field label="Bio" hint={`${bio.length}/200 characters`}>
-                  <textarea value={bio} onChange={(e) => setBio(e.target.value)}
-                    placeholder="Tell something about yourself…" maxLength={200} rows={3}
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#6c63ff]/60 transition-all resize-none" />
-                </Field>
-
-                <button type="submit" disabled={saving}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#6c63ff] to-[#8b5cf6] text-white font-semibold text-sm hover:opacity-90 disabled:opacity-60 transition-all">
-                  {saving ? "Saving…" : "Save Changes"}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 700,
+                color: isDark ? "#f0f0f0" : "#111" }}>{name || "Your Name"}</div>
+              <div style={{ fontSize: 13, color: isDark ? "rgba(255,255,255,0.38)" : "rgba(0,0,0,0.45)",
+                marginTop: 2 }}>{email}</div>
+              <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                <button onClick={() => fileRef.current?.click()}
+                  style={{ padding: "7px 16px", borderRadius: 100, fontSize: 12, fontWeight: 600,
+                    background: `${accent}1a`, border: `1px solid ${accent}44`,
+                    color: accent, cursor: "pointer", outline: "none" }}>
+                  Upload Photo
                 </button>
-
-                {/* Danger Zone */}
-                <div className="mt-2 pt-5 border-t border-white/[0.06]">
-                  <p className="text-xs font-bold text-red-400 mb-1">⚠ Danger Zone</p>
-                  <p className="text-xs text-gray-500 mb-3">Permanently delete your account and all data. Cannot be undone.</p>
-                  <button type="button" onClick={handleDelete}
-                    className="w-full py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-semibold text-sm hover:bg-red-500/20 transition-all">
-                    Delete My Account
+                {imgPreview && (
+                  <button onClick={handleRemovePhoto}
+                    style={{ padding: "7px 16px", borderRadius: 100, fontSize: 12, fontWeight: 600,
+                      background: "rgba(255,77,109,0.1)", border: "1px solid rgba(255,77,109,0.3)",
+                      color: "#ff4d6d", cursor: "pointer", outline: "none" }}>
+                    Remove
                   </button>
-                </div>
-              </form>
-            )}
+                )}
+              </div>
+              <p style={{ fontSize: 11, color: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.35)",
+                margin: "8px 0 0" }}>JPG, PNG or GIF · Max 5MB</p>
+            </div>
 
-            {/* Password Tab */}
-            {tab === "password" && (
-              <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
-                {[
-                  { label: "Current Password",    val: curPwd,  set: setCurPwd,  ph: "••••••••" },
-                  { label: "New Password",         val: newPwd,  set: setNewPwd,  ph: "Min 8 characters" },
-                  { label: "Confirm New Password", val: confPwd, set: setConfPwd, ph: "Repeat new password" },
-                ].map(({ label, val, set, ph }) => (
-                  <Field key={label} label={label}>
-                    <input type="password" value={val} onChange={(e) => set(e.target.value)} placeholder={ph}
-                      className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#6c63ff]/60 transition-all" />
-                  </Field>
-                ))}
-                <button type="submit" disabled={saving}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#6c63ff] to-[#8b5cf6] text-white font-semibold text-sm hover:opacity-90 disabled:opacity-60 transition-all">
-                  {saving ? "Updating…" : "Update Password"}
-                </button>
-              </form>
-            )}
+            <input ref={fileRef} type="file" accept="image/*"
+              onChange={handleImageChange} style={{ display: "none" }} />
           </div>
+
+          {/* Form fields */}
+          <div style={{ background: isDark ? "#13151f" : "#fff",
+            borderRadius: 20, border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)"}`,
+            padding: 24, marginBottom: 16, animation: "pfSlide 0.35s ease",
+            display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* Display name */}
+            <div>
+              <label style={labelStyle}>Display Name</label>
+              <input className="pf-input" value={name} onChange={e => setName(e.target.value)}
+                placeholder="Your display name" style={inputStyle(errors.name)}
+                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}22`; }}
+                onBlur={e  => { e.target.style.borderColor = errors.name ? "#ff4d6d" : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)"; e.target.style.boxShadow = "none"; }}
+              />
+              {errors.name && <p style={{ color:"#ff4d6d", fontSize:12, margin:"4px 0 0" }}>{errors.name}</p>}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label style={labelStyle}>Email Address</label>
+              <input className="pf-input" type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="your@email.com" style={inputStyle(errors.email)}
+                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}22`; }}
+                onBlur={e  => { e.target.style.borderColor = errors.email ? "#ff4d6d" : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)"; e.target.style.boxShadow = "none"; }}
+              />
+              {errors.email && <p style={{ color:"#ff4d6d", fontSize:12, margin:"4px 0 0" }}>{errors.email}</p>}
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label style={labelStyle}>Bio <span style={{ opacity:0.5, fontWeight:400, textTransform:"none", letterSpacing:0 }}>(optional)</span></label>
+              <textarea value={bio} onChange={e => setBio(e.target.value)}
+                placeholder="Tell people a little about yourself..."
+                rows={3} maxLength={160}
+                style={{ ...inputStyle(false), resize: "none", lineHeight: 1.6 }}
+                onFocus={e => { e.target.style.borderColor = accent; e.target.style.boxShadow = `0 0 0 3px ${accent}22`; }}
+                onBlur={e  => { e.target.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)"; e.target.style.boxShadow = "none"; }}
+              />
+              <p style={{ fontSize: 11, color: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.35)",
+                margin: "4px 0 0", textAlign: "right" }}>{bio.length}/160</p>
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div style={{ background: isDark ? "#13151f" : "#fff",
+            borderRadius: 16, border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.08)"}`,
+            overflow: "hidden", marginBottom: 24 }}>
+            {[
+              { icon:"🔑", label:"Change Password", onClick:()=>navigate("/change-password") },
+              { icon:"⚙️", label:"Account Settings",  onClick:()=>navigate("/settings") },
+            ].map(({icon, label, onClick}, i) => (
+              <div key={i} onClick={onClick}
+                style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 20px",
+                  borderTop: i===0?"none":`1px solid ${isDark?"rgba(255,255,255,0.07)":"rgba(0,0,0,0.06)"}`,
+                  cursor:"pointer", transition:"background 0.15s",
+                  color: isDark ? "#f0f0f0" : "#111" }}
+                onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.03)"}
+                onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                <div style={{ width:36, height:36, borderRadius:10,
+                  background:"rgba(255,255,255,0.06)",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:17 }}>{icon}</div>
+                <span style={{ fontSize:14, fontWeight:500 }}>{label}</span>
+                <span style={{ marginLeft:"auto", opacity:0.4, fontSize:18 }}>›</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Save button */}
+          <button className="pf-btn-save" onClick={handleSave} disabled={saving}
+            style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none",
+              background: saving ? `${accent}88` : accent,
+              color: "#fff", fontSize: 15, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer",
+              transition: "all 0.2s", outline: "none",
+              boxShadow: saving ? "none" : `0 4px 20px ${accent}55` }}>
+            {saving ? (
+              <span style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                <span style={{ width:16, height:16, borderRadius:"50%",
+                  border:`2px solid rgba(255,255,255,0.3)`, borderTopColor:"#fff",
+                  display:"inline-block", animation:"spin 0.7s linear infinite" }}/>
+                Saving...
+              </span>
+            ) : "Save Changes"}
+          </button>
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
         </div>
       </div>
-    </div>
+
+      {/* Toast */}
+      {toast && (
+        <div style={{ position:"fixed", bottom:28, left:"50%", transform:"translateX(-50%)",
+          background: toast.type==="error" ? "#ff4d6d" : accent,
+          color:"#fff", padding:"11px 26px", borderRadius:100,
+          fontSize:13, fontWeight:600, boxShadow:`0 4px 24px rgba(0,0,0,0.4)`,
+          zIndex:999999, animation:"pfToast 0.3s ease", whiteSpace:"nowrap", pointerEvents:"none" }}>
+          {toast.type==="error" ? "⚠️ " : "✓ "}{toast.msg}
+        </div>
+      )}
+    </>
   );
 }

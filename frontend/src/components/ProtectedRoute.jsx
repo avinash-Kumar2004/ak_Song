@@ -8,21 +8,23 @@ export default function ProtectedRoute({ children }) {
   const { showToast }     = useToast();
   const navigate          = useNavigate();
   const location          = useLocation();
-  const toastShown        = useRef(false); // prevent double toast in StrictMode
+  const toastShown        = useRef(false);
 
   useEffect(() => {
-    // Only act once loading is done and user is NOT logged in
-    if (!loading && !user) {
-      if (!toastShown.current) {
-        showToast("Please log in to access this page 🔒", "error");
-        toastShown.current = true;
-      }
-      // Send them back to home, not to /login
-      navigate("/", { replace: true });
-    }
-  }, [loading, user, navigate, showToast, location.pathname]);
+    // Reset only when path genuinely changes
+    return () => { toastShown.current = false; };
+  }, [location.pathname]);
 
-  // ── Loading spinner ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (loading || user) return;          // not ready yet, or already logged in
+    if (toastShown.current) return;       // already handled this visit
+
+    toastShown.current = true;            // mark BEFORE async navigate
+    showToast("Please log in to access this page 🔒", "error");
+    navigate("/", { replace: true });
+  }, [loading, user]);                    // ← intentionally omit navigate/showToast/pathname
+                                          //   so StrictMode's double-invoke doesn't re-fire
+
   if (loading) {
     return (
       <div style={{
@@ -45,9 +47,7 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  // Not logged in — render nothing (navigate already called above)
   if (!user) return null;
 
-  // ✅ Logged in — render the protected page
   return children;
 }
