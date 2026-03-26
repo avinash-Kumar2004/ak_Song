@@ -9,6 +9,7 @@ import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";        // ← ADD
 import { errorHandler } from "./middleware/authMiddleware.js";
 
 // ── Connect to MongoDB ─────────────────────────────────────────────────────
@@ -23,21 +24,23 @@ app.use(helmet());
 app.use(
   cors({
     origin:      process.env.CLIENT_URL,
-    credentials: true, // allow cookies
+    credentials: true,
   })
 );
 
 // ── Rate limiting (auth routes only) ──────────────────────────────────────
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max:      20,              // max 20 requests per window per IP
+  windowMs: 15 * 60 * 1000,
+  max:      20,
   message:  { status: "fail", message: "Too many requests from this IP. Try again in 15 minutes." },
   standardHeaders: true,
   legacyHeaders:   false,
 });
 
 // ── Body + cookie parsing ──────────────────────────────────────────────────
-app.use(express.json({ limit: "10kb" }));        // prevent large payload attacks
+// NOTE: express.json limit 10kb se hatao — multer multipart handle karta hai
+// JSON limit sirf JSON routes ke liye apply hogi, file upload pe nahi
+app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -45,8 +48,9 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 // ── Routes ────────────────────────────────────────────────────────────────
-app.use("/api/auth",  authLimiter, authRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/auth",   authLimiter, authRoutes);
+app.use("/api/users",  userRoutes);
+app.use("/api",        uploadRoutes);                        // ← ADD  → /api/upload-song
 
 // ── Health check ──────────────────────────────────────────────────────────
 app.get("/api/health", (_req, res) => res.json({ status: "ok", env: process.env.NODE_ENV }));
@@ -58,6 +62,7 @@ app.use((req, res) => {
     message: `Route ${req.originalUrl} not found.`,
   });
 });
+
 // ── Global error handler ──────────────────────────────────────────────────
 app.use(errorHandler);
 

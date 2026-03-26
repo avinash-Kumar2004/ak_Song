@@ -57,6 +57,110 @@ const BHAKTI = [
       file: "/songs/shiv/shiva.mp3",
     },
   ],
-}
+},
+ {
+    id: "vishnu",
+    title: "Lord Vishnu",
+    cover: "/bhaktis/vishu.jpg",
+    artist: "Devotional",
+    releaseDate: "2024",
+    label: "Devotional",
+    color: "#ff6b35",
+
+    songs: [
+      {
+        id: "vishnu_01",
+        title: "Om Namo Bhagavate Vasudevaya",
+        artists: "Devotional",
+        duration: "5:29",
+        plays: "145,884,221",
+        file: "/songs/vishnu/om.mp3",
+      },
+    ],
+  },
+
+  {
+    id: "hanuman",
+    title: "Hanuman Ji",
+    cover: "/bhaktis/images.jpg",
+    artist: "Devotional",
+    releaseDate: "2024",
+    label: "Devotional",
+    color: "#ff6b35",
+
+    songs: [
+      {
+        id: "hanuman_01",
+        title: "Hanuman Chalisa",
+        artists: "Devotional",
+        duration: "9:29",
+        plays: "145,884,221",
+        file: "/songs/hanuman/chalisa.mp3",
+      },
+    ],
+  },
+
+  {
+    id: "sai_baba",
+    title: "Sai Baba",
+    cover: "/bhaktis/sai.jpg",
+    artist: "Devotional",
+    releaseDate: "2024",
+    label: "Devotional",
+    color: "#ff6b35",
+
+    songs: [
+      {
+        id: "sai_01",
+        title: "Sainath Tere Hazaron Haath",
+        artists: "Devotional",
+        duration: "6:49",
+        plays: "145,884,221",
+        file: "/songs/sai/sai.mp3",
+      },
+    ],
+  },
+
+  {
+    id: "ganesh",
+    title: "Shree Ganesh",
+    cover: "/bhaktis/gesnh.jpg",
+    artist: "Devotional",
+    releaseDate: "2024",
+    label: "Devotional",
+    color: "#ff6b35",
+
+    songs: [
+      {
+        id: "ganesh_01",
+        title: "Shankar Ji Ka Damroo Baje",
+        artists: "Devotional",
+        duration: "4:32",
+        plays: "145,884,221",
+        file: "/songs/ganesh/ganesh.mp3",
+      },
+    ],
+  },
+
+  {
+    id: "krishna",
+    title: "Shree Krishna",
+    cover: "/bhaktis/krishna.jpg",
+    artist: "Devotional",
+    releaseDate: "2024",
+    label: "Devotional",
+    color: "#ff6b35",
+
+    songs: [
+      {
+        id: "krishna_01",
+        title: "Yada Yada Hi Dharmasya",
+        artists: "Devotional",
+        duration: "4:32",
+        plays: "145,884,221",
+        file: "/songs/krihsna/yada.mp3",
+      },
+    ],
+  },
 ];
 export default BHAKTI;

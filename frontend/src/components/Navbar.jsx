@@ -18,7 +18,15 @@ const IcoHome = () => (
   </svg>
 );
 const IcoSearch = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+  >
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
@@ -39,7 +47,15 @@ const IcoDownload = () => (
   </svg>
 );
 const IcoSettings = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
@@ -53,17 +69,17 @@ const IcoSupport = () => (
 // ─── Link configs ─────────────────────────────────────────────────────────────
 const DESKTOP_LINKS = [
   { label: "Favorite", href: "/favorite", Ico: IcoHeart },
-  { label: "Support",  href: "/support",  Ico: IcoSupport },
+  { label: "Support", href: "/support", Ico: IcoSupport },
   { label: "Download", href: "/download", Ico: IcoDownload },
 ];
 
 const MOBILE_LINKS = [
-  { label: "Home",     href: "/",         Ico: IcoHome },
-  { label: "Search",   href: "/search",   Ico: IcoSearch },
-  { label: "Library",  href: "/library",  Ico: IcoLibrary },
+  { label: "Home", href: "/", Ico: IcoHome },
+  { label: "Search", href: "/search", Ico: IcoSearch },
+  { label: "Library", href: "/library", Ico: IcoLibrary },
   { label: "Favorite", href: "/favorite", Ico: IcoHeart },
   { label: "Download", href: "/download", Ico: IcoDownload },
-  { label: "Support",  href: "/support",  Ico: IcoSupport },
+  { label: "Support", href: "/support", Ico: IcoSupport },
   { label: "Settings", href: "/settings", Ico: IcoSettings },
 ];
 
@@ -77,16 +93,16 @@ export default function Navbar({
   fileRef,
   onNewPlaylist,
 }) {
-  const location  = useLocation();
-  const navigate  = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const isLoggedIn = !!user;
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search,   setSearch]   = useState("");
+  const [search, setSearch] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const menuRef = useRef(null);
-  const hamRef  = useRef(null);
+  const hamRef = useRef(null);
   const path = location.pathname;
 
   useEffect(() => {
@@ -95,32 +111,42 @@ export default function Navbar({
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  useEffect(() => { setMenuOpen(false); }, [path]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [path]);
 
   useEffect(() => {
     const fn = (e) => {
       if (
         menuOpen &&
-        menuRef.current && !menuRef.current.contains(e.target) &&
-        hamRef.current  && !hamRef.current.contains(e.target)
-      ) setMenuOpen(false);
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        hamRef.current &&
+        !hamRef.current.contains(e.target)
+      )
+        setMenuOpen(false);
     };
     document.addEventListener("mousedown", fn);
     return () => document.removeEventListener("mousedown", fn);
   }, [menuOpen]);
 
   useEffect(() => {
-    const fn = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    const fn = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
     document.addEventListener("keydown", fn);
     return () => document.removeEventListener("keydown", fn);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
-  const active = (href) => (href === "/" ? path === "/" : path.startsWith(href));
+  const active = (href) =>
+    href === "/" ? path === "/" : path.startsWith(href);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -132,69 +158,138 @@ export default function Navbar({
       <NavCSS />
 
       {/* ══ NAVBAR BAR ══ */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
-        height: NAVBAR_H,
-        display: "flex", alignItems: "center",
-        padding: "0 20px", gap: 0,
-        background: scrolled ? "rgba(7,8,14,0.97)" : "rgba(7,8,14,0.88)",
-        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
-        borderBottom: "1px solid rgba(255,255,255,0.07)",
-        boxShadow: scrolled ? "0 2px 30px rgba(0,0,0,0.6)" : "none",
-        transition: "background 0.3s, box-shadow 0.3s",
-        fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif",
-      }}>
-
+      <nav
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          height: NAVBAR_H,
+          display: "flex",
+          alignItems: "center",
+          padding: "0 20px",
+          gap: 0,
+          background: scrolled ? "rgba(7,8,14,0.97)" : "rgba(7,8,14,0.88)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: scrolled ? "0 2px 30px rgba(0,0,0,0.6)" : "none",
+          transition: "background 0.3s, box-shadow 0.3s",
+          fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif",
+        }}
+      >
         {/* Logo */}
-        <Link to="/" className="nb-logo" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none", flexShrink: 0, marginRight: 16 }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-            background: "linear-gradient(135deg,#6c63ff,#ff4d6d)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 3px 14px rgba(108,99,255,0.45)",
-          }}>
+        <Link
+          to="/"
+          className="nb-logo"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 9,
+            textDecoration: "none",
+            flexShrink: 0,
+            marginRight: 26,
+          }}
+        >
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 9,
+              flexShrink: 0,
+              background: "linear-gradient(135deg,#6c63ff,#ff4d6d)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 3px 14px rgba(108,99,255,0.45)",
+            }}
+          >
             <IcoMusic />
           </div>
-          <span className="nb-logo-text" style={{
-            fontWeight: 800, fontSize: 18, color: "rgba(255,255,255,0.93)",
-            letterSpacing: "-0.3px",
-          }}>
+          <span
+            className="nb-logo-text"
+            style={{
+              fontWeight: 800,
+              fontSize: 18,
+              color: "rgba(255,255,255,0.93)",
+              letterSpacing: "-0.3px",
+            }}
+          >
             Sound<span style={{ color: ACCENT }}>Wave</span>
           </span>
         </Link>
 
         {/* Search bar — desktop only */}
-        <div className="nb-search" style={{
-          display: "flex", alignItems: "center", gap: 8,
-          width: 390, flexShrink: 0, marginRight: 12,
-        }}>
-          <Link to="/" title="Home" className="nb-icon-btn" style={{
-            width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            border: `1px solid ${active("/") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
-            background: active("/") ? ACCENT + "18" : "rgba(255,255,255,0.03)",
-            color: active("/") ? ACCENT : "rgba(255,255,255,0.4)",
-            textDecoration: "none",
-          }}>
+        <div
+          className="nb-search"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 18,
+            width: 390,
+            flexShrink: 0,
+            marginRight: 12,
+          }}
+        >
+          <Link
+            to="/"
+            title="Home"
+            className="nb-icon-btn"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: `1px solid ${active("/") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
+              background: active("/")
+                ? ACCENT + "18"
+                : "rgba(255,255,255,0.03)",
+              color: active("/") ? ACCENT : "rgba(255,255,255,0.4)",
+              textDecoration: "none",
+            }}
+          >
             <IcoHome />
           </Link>
-          <div style={{
-            flex: 1, height: 36, display: "flex", alignItems: "center", gap: 8,
-            padding: "0 14px", borderRadius: 100,
-            border: `1px solid ${path === "/search" ? ACCENT + "60" : "rgba(255,255,255,0.1)"}`,
-            background: path === "/search" ? ACCENT + "0d" : "rgba(255,255,255,0.04)",
-            cursor: "text",
-          }} onClick={() => { if (path !== "/search") navigate("/search"); }}>
-            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}><IcoSearch /></span>
+          <div
+            style={{
+              flex: 1,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "0 14px",
+              borderRadius: 100,
+              border: `1px solid ${path === "/search" ? ACCENT + "60" : "rgba(255,255,255,0.1)"}`,
+              background:
+                path === "/search" ? ACCENT + "0d" : "rgba(255,255,255,0.04)",
+              cursor: "text",
+            }}
+            onClick={() => {
+              if (path !== "/search") navigate("/search");
+            }}
+          >
+            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}>
+              <IcoSearch />
+            </span>
             <input
               type="text"
               value={search}
               onChange={handleSearch}
-              onFocus={() => { if (path !== "/search") navigate("/search"); }}
+              onFocus={() => {
+                if (path !== "/search") navigate("/search");
+              }}
               placeholder="Search songs, artists..."
               style={{
-                flex: 1, background: "none", border: "none", outline: "none",
-                color: "#fff", fontSize: 13,
+                flex: 1,
+                background: "none",
+                border: "none",
+                outline: "none",
+                color: "#fff",
+                fontSize: 13,
                 fontFamily: "inherit",
               }}
             />
@@ -205,95 +300,176 @@ export default function Navbar({
         <div className="nb-spacer" style={{ flex: 1 }} />
 
         {/* Desktop right section */}
-        <div className="nb-desktop" style={{
-          display: "flex", alignItems: "center", gap: 2, flexShrink: 0,
-        }}>
+        <div
+          className="nb-desktop"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            flexShrink: 0,
+          }}
+        >
           {DESKTOP_LINKS.map(({ label, href, Ico }) => (
-            <Link key={href} to={href} className="nb-link" style={{
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "6px 11px", borderRadius: 8,
-              fontSize: 13, fontWeight: 500, textDecoration: "none",
-              color: active(href) ? ACCENT : "rgba(255,255,255,0.5)",
-              background: active(href) ? ACCENT + "14" : "transparent",
-              whiteSpace: "nowrap",
-            }}>
-              <span style={{ display: "flex", opacity: 0.75 }}><Ico /></span>
+            <Link
+              key={href}
+              to={href}
+              className="nb-link"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "6px 11px",
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                textDecoration: "none",
+                color: active(href) ? ACCENT : "rgba(255,255,255,0.5)",
+                background: active(href) ? ACCENT + "14" : "transparent",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span style={{ display: "flex", opacity: 0.75 }}>
+                <Ico />
+              </span>
               {label}
             </Link>
           ))}
 
-          <div style={{ width: 1, height: 22, background: "rgba(255,255,255,0.08)", margin: "0 8px" }} />
+          <div
+            style={{
+              width: 1,
+              height: 22,
+              background: "rgba(255,255,255,0.08)",
+              margin: "0 8px",
+            }}
+          />
 
-          <Link to="/settings" className="nb-icon-btn" title="Settings" style={{
-            width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            border: `1px solid ${active("/settings") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
-            background: active("/settings") ? ACCENT + "18" : "rgba(255,255,255,0.03)",
-            color: active("/settings") ? ACCENT : "rgba(255,255,255,0.4)",
-            textDecoration: "none",
-          }}>
+          <Link
+            to="/settings"
+            className="nb-icon-btn"
+            title="Settings"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: `1px solid ${active("/settings") ? ACCENT + "55" : "rgba(255,255,255,0.1)"}`,
+              background: active("/settings")
+                ? ACCENT + "18"
+                : "rgba(255,255,255,0.03)",
+              color: active("/settings") ? ACCENT : "rgba(255,255,255,0.4)",
+              textDecoration: "none",
+            }}
+          >
             <IcoSettings />
           </Link>
 
-          {!authLoading && (
-            isLoggedIn
-              ? <div style={{ marginLeft: 8 }}><ProfileDropdown /></div>
-              : <div style={{ display: "flex", gap: 8, marginLeft: 8 }}>
-                  <Link to="/signup" className="nb-signup" style={{
-                    padding: "7px 16px", borderRadius: 100,
+          {!authLoading &&
+            (isLoggedIn ? (
+              <div style={{ marginLeft: 8 }}>
+                <ProfileDropdown />
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8, marginLeft: 8 }}>
+                <Link
+                  to="/signup"
+                  className="nb-signup"
+                  style={{
+                    padding: "7px 16px",
+                    borderRadius: 100,
                     border: "1px solid rgba(255,255,255,0.15)",
-                    color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600,
-                    textDecoration: "none", whiteSpace: "nowrap",
-                  }}>Sign up</Link>
-                  <Link to="/login" className="nb-login" style={{
-                    padding: "7px 18px", borderRadius: 100,
-                    background: ACCENT, color: "#fff",
-                    fontSize: 13, fontWeight: 700,
-                    textDecoration: "none", whiteSpace: "nowrap",
+                    color: "rgba(255,255,255,0.85)",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Sign up
+                </Link>
+                <Link
+                  to="/login"
+                  className="nb-login"
+                  style={{
+                    padding: "7px 18px",
+                    borderRadius: 100,
+                    background: ACCENT,
+                    color: "#fff",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    whiteSpace: "nowrap",
                     boxShadow: `0 4px 16px ${ACCENT}50`,
-                  }}>Log in</Link>
-                </div>
-          )}
+                  }}
+                >
+                  Log in
+                </Link>
+              </div>
+            ))}
         </div>
 
         {/* ── Hamburger — mobile only ── */}
         <button
           ref={hamRef}
-          onClick={() => setMenuOpen(o => !o)}
+          onClick={() => setMenuOpen((o) => !o)}
           className="nb-ham"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           style={{
-            flexShrink: 0, marginLeft: "auto",
-            width: 40, height: 40, borderRadius: 10, padding: 0,
-            display: "none", flexDirection: "column",
-            alignItems: "center", justifyContent: "center", gap: 5,
+            flexShrink: 0,
+            marginLeft: "auto",
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            padding: 0,
+            display: "none",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 5,
             background: menuOpen ? `${ACCENT}18` : "rgba(255,255,255,0.05)",
             border: `1px solid ${menuOpen ? ACCENT + "50" : "rgba(255,255,255,0.1)"}`,
             cursor: "pointer",
           }}
         >
-          <span style={{
-            display: "block", width: 18, height: 1.5,
-            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
-            borderRadius: 2,
-            transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none",
-            transition: "transform 0.27s ease, background 0.2s",
-          }} />
-          <span style={{
-            display: "block", width: 18, height: 1.5,
-            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
-            borderRadius: 2,
-            opacity: menuOpen ? 0 : 1,
-            transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
-            transition: "opacity 0.2s, transform 0.2s",
-          }} />
-          <span style={{
-            display: "block", width: 18, height: 1.5,
-            background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
-            borderRadius: 2,
-            transform: menuOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
-            transition: "transform 0.27s ease, background 0.2s",
-          }} />
+          <span
+            style={{
+              display: "block",
+              width: 18,
+              height: 1.5,
+              background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+              borderRadius: 2,
+              transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none",
+              transition: "transform 0.27s ease, background 0.2s",
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: 18,
+              height: 1.5,
+              background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+              borderRadius: 2,
+              opacity: menuOpen ? 0 : 1,
+              transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
+              transition: "opacity 0.2s, transform 0.2s",
+            }}
+          />
+          <span
+            style={{
+              display: "block",
+              width: 18,
+              height: 1.5,
+              background: menuOpen ? ACCENT : "rgba(255,255,255,0.75)",
+              borderRadius: 2,
+              transform: menuOpen
+                ? "translateY(-6.5px) rotate(-45deg)"
+                : "none",
+              transition: "transform 0.27s ease, background 0.2s",
+            }}
+          />
         </button>
       </nav>
 
@@ -302,9 +478,12 @@ export default function Navbar({
         onClick={() => setMenuOpen(false)}
         className="nb-backdrop"
         style={{
-          position: "fixed", inset: 0, zIndex: 998,
+          position: "fixed",
+          inset: 0,
+          zIndex: 998,
           background: "rgba(0,0,0,0.65)",
-          backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
           transition: "opacity 0.25s",
@@ -318,7 +497,9 @@ export default function Navbar({
         className="nb-menu"
         style={{
           position: "fixed",
-          top: NAVBAR_H, left: 0, right: 0,
+          top: NAVBAR_H,
+          left: 0,
+          right: 0,
           zIndex: 999,
           background: "#0b0d16",
           borderBottom: "1px solid rgba(255,255,255,0.07)",
@@ -327,29 +508,46 @@ export default function Navbar({
           transform: menuOpen ? "translateY(0)" : "translateY(-10px)",
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
-          transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.22s",
+          transition:
+            "transform 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.22s",
           display: "none",
           fontFamily: "'Segoe UI', system-ui, sans-serif",
         }}
       >
         {/* Mobile search */}
         <div style={{ padding: "14px 14px 8px" }}>
-          <div style={{
-            height: 42, display: "flex", alignItems: "center", gap: 10,
-            padding: "0 14px", borderRadius: 100,
-            border: "1px solid rgba(255,255,255,0.1)",
-            background: "rgba(255,255,255,0.04)",
-          }}>
-            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}><IcoSearch /></span>
+          <div
+            style={{
+              height: 42,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "0 14px",
+              borderRadius: 100,
+              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.04)",
+            }}
+          >
+            <span style={{ color: "rgba(255,255,255,0.3)", display: "flex" }}>
+              <IcoSearch />
+            </span>
             <input
               type="text"
               value={search}
               onChange={handleSearch}
-              onFocus={() => { navigate("/search"); setMenuOpen(false); }}
+              onFocus={() => {
+                navigate("/search");
+                setMenuOpen(false);
+              }}
               placeholder="Search songs, artists..."
               style={{
-                flex: 1, background: "none", border: "none", outline: "none",
-                color: "#fff", fontSize: 14, fontFamily: "inherit",
+                flex: 1,
+                background: "none",
+                border: "none",
+                outline: "none",
+                color: "#fff",
+                fontSize: 14,
+                fontFamily: "inherit",
               }}
             />
           </div>
@@ -364,67 +562,126 @@ export default function Navbar({
               onClick={() => setMenuOpen(false)}
               className="nb-mlink"
               style={{
-                display: "flex", alignItems: "center", gap: 12,
-                padding: "10px 12px", borderRadius: 12,
-                fontSize: 14, fontWeight: 500, textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "10px 12px",
+                borderRadius: 12,
+                fontSize: 14,
+                fontWeight: 500,
+                textDecoration: "none",
                 color: active(href) ? ACCENT : "rgba(255,255,255,0.65)",
                 background: active(href) ? `${ACCENT}12` : "transparent",
                 marginBottom: 2,
               }}
             >
-              <span style={{
-                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: active(href) ? `${ACCENT}22` : "rgba(255,255,255,0.06)",
-                color: active(href) ? ACCENT : "rgba(255,255,255,0.4)",
-              }}>
+              <span
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: active(href)
+                    ? `${ACCENT}22`
+                    : "rgba(255,255,255,0.06)",
+                  color: active(href) ? ACCENT : "rgba(255,255,255,0.4)",
+                }}
+              >
                 <Ico />
               </span>
               <span>{label}</span>
               {active(href) && (
-                <span style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: ACCENT, flexShrink: 0 }} />
+                <span
+                  style={{
+                    marginLeft: "auto",
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: ACCENT,
+                    flexShrink: 0,
+                  }}
+                />
               )}
             </Link>
           ))}
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "6px 14px" }} />
+        <div
+          style={{
+            height: 1,
+            background: "rgba(255,255,255,0.07)",
+            margin: "6px 14px",
+          }}
+        />
 
         {/* Auth */}
         <div style={{ padding: "8px 14px 20px" }}>
-          {!authLoading && (
-            isLoggedIn
-              ? (
-                <Link to="/profile" onClick={() => setMenuOpen(false)} style={{
-                  display: "flex", alignItems: "center", gap: 10,
-                  padding: "11px 14px", borderRadius: 12,
-                  fontSize: 14, fontWeight: 500,
+          {!authLoading &&
+            (isLoggedIn ? (
+              <Link
+                to="/profile"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "11px 14px",
+                  borderRadius: 12,
+                  fontSize: 14,
+                  fontWeight: 500,
                   color: "rgba(255,255,255,0.65)",
                   background: "rgba(255,255,255,0.04)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   textDecoration: "none",
-                }}>
-                  👤 My Profile
-                </Link>
-              )
-              : (
-                <div style={{ display: "flex", gap: 10 }}>
-                  <Link to="/signup" onClick={() => setMenuOpen(false)} className="nb-signup" style={{
-                    flex: 1, textAlign: "center", padding: "11px", borderRadius: 100,
+                }}
+              >
+                👤 My Profile
+              </Link>
+            ) : (
+              <div style={{ display: "flex", gap: 10 }}>
+                <Link
+                  to="/signup"
+                  onClick={() => setMenuOpen(false)}
+                  className="nb-signup"
+                  style={{
+                    flex: 1,
+                    textAlign: "center",
+                    padding: "11px",
+                    borderRadius: 100,
                     border: "1px solid rgba(255,255,255,0.15)",
-                    color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600,
+                    color: "rgba(255,255,255,0.85)",
+                    fontSize: 13,
+                    fontWeight: 600,
                     textDecoration: "none",
-                  }}>Sign up</Link>
-                  <Link to="/login" onClick={() => setMenuOpen(false)} className="nb-login" style={{
-                    flex: 1, textAlign: "center", padding: "11px", borderRadius: 100,
-                    background: ACCENT, color: "#fff",
-                    fontSize: 13, fontWeight: 700, textDecoration: "none",
+                  }}
+                >
+                  Sign up
+                </Link>
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="nb-login"
+                  style={{
+                    flex: 1,
+                    textAlign: "center",
+                    padding: "11px",
+                    borderRadius: 100,
+                    background: ACCENT,
+                    color: "#fff",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    textDecoration: "none",
                     boxShadow: `0 4px 16px ${ACCENT}50`,
-                  }}>Log in</Link>
-                </div>
-              )
-          )}
+                  }}
+                >
+                  Log in
+                </Link>
+              </div>
+            ))}
         </div>
       </div>
 

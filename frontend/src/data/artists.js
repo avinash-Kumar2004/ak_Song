@@ -173,7 +173,69 @@ const ARTISTS = [
       file: "/songs/alka/teri.mp3",
     },
   ],
+},
+{
+  id: "AR Rehman",
+  name: "AR Rehman",
+  img: "/artists/ar.webp",
+  genre: "Playback Singer",
+  followers: "6,845,219",
+  bio: "Legendary Bollywood playback singer known for iconic 90s and 2000s hits",
+  songs: [
+    {
+      id: "ar_01",
+      title: "Aawaara Angaara",
+      album: "Aawaara Angaara ",
+      duration: "4:30",
+      plays: "210,554,321",
+      file: "/songs/rehman/awara.mp3",
+    },
+    
+  ],
+},
+
+{
+  id: "jubin_nautiyal",
+  name: "Jubin Nautiyal",
+  img: "/artists/jubin.jpg",
+  genre: "Playback Singer",
+  followers: "6,845,219",
+
+  bio: "Popular Bollywood playback singer known for soulful romantic songs like Humnava Mere and Lut Gaye",
+
+  songs: [
+    {
+      id: "jb_01",
+      title: "Humnava Mere",
+      album: "Humnava Mere",
+      duration: "3:30", // (verify from file if needed)
+      plays: "210,554,321",
+      file: "/songs/jubin/ham.mp3",
+    },
+  ],
+},
+{
+  id: "badshah",
+  name: "Badshah",
+  img: "/artists/bad.jpg",
+  genre: "Rapper / Playback Singer",
+  followers: "6,845,219",
+
+  bio: "Popular Indian rapper and music producer known for party hits and commercial Bollywood tracks",
+
+  songs: [
+    {
+      id: "bad_01",
+      title: "Genda Phool",
+      album: "Genda Phool",
+      duration: "3:30", // better to auto-fetch
+      plays: "210,554,321",
+      file: "/songs/badshah/genda.mp3",
+    },
+  ],
 }
+
+
 
   // ── Naaye artists add karna ho to yahan neeche paste karo ─────────────────
   // {
