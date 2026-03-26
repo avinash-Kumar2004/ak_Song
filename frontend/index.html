@@ -2,10 +2,116 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- ═══════════════════════════════════════════
+         FAVICON & APP ICONS
+    ═══════════════════════════════════════════ -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="msapplication-TileColor" content="#7c3aed" />
+
+    <!-- ═══════════════════════════════════════════
+         VIEWPORT & COMPATIBILITY
+    ═══════════════════════════════════════════ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- ═══════════════════════════════════════════
+         PRIMARY META TAGS
+    ═══════════════════════════════════════════ -->
+    <title>SongWave — Music for Everyone</title>
+    <meta name="title" content="SongWave — Music for Everyone" />
+    <meta
+      name="description"
+      content="SongWave par apne favourite gaane suno, upload karo, aur playlists banao. Discover trending tracks, follow artists, aur apni music journey shuru karo — bilkul free."
+    />
+    <meta
+      name="keywords"
+      content="songwave, music streaming, gaane suno, song upload, playlist, hindi songs, bollywood, music player, free music, indie music, artists"
+    />
+    <meta name="author" content="SongWave" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English, Hindi" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="rating" content="general" />
+
+    <!-- ═══════════════════════════════════════════
+         OPEN GRAPH / FACEBOOK
+    ═══════════════════════════════════════════ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://songwave.app/" />
+    <meta property="og:title" content="SongWave — Music for Everyone" />
+    <meta
+      property="og:description"
+      content="Apne favourite gaane suno, upload karo aur share karo. SongWave — where every wave tells a story."
+    />
+    <meta property="og:image" content="https://songwave.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SongWave Music Platform" />
+    <meta property="og:site_name" content="SongWave" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- ═══════════════════════════════════════════
+         TWITTER / X CARD
+    ═══════════════════════════════════════════ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@songwaveapp" />
+    <meta name="twitter:creator" content="@songwaveapp" />
+    <meta name="twitter:url" content="https://songwave.app/" />
+    <meta name="twitter:title" content="SongWave — Music for Everyone" />
+    <meta
+      name="twitter:description"
+      content="Apne favourite gaane suno, upload karo aur share karo. SongWave — where every wave tells a story."
+    />
+    <meta name="twitter:image" content="https://songwave.app/og-image.png" />
+
+    <!-- ═══════════════════════════════════════════
+         PWA / APP META
+    ═══════════════════════════════════════════ -->
+    <meta name="application-name" content="SongWave" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SongWave" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- ═══════════════════════════════════════════
+         PERFORMANCE HINTS
+    ═══════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.songwave.app" />
+
+    <!-- ═══════════════════════════════════════════
+         STRUCTURED DATA (JSON-LD)
+    ═══════════════════════════════════════════ -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SongWave",
+        "url": "https://songwave.app",
+        "description": "Music streaming platform where users can upload, discover and share songs.",
+        "applicationCategory": "MusicApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "SongWave"
+        }
+      }
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
