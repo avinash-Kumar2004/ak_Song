@@ -1,7 +1,7 @@
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem("sw_token"); // ✅ matches AuthContext key
+  const token = localStorage.getItem("sw_token");
 
   const headers = { ...(options.headers || {}) };
 
@@ -42,7 +42,10 @@ export const userAPI = {
     request("/users/profile", { method: "PATCH", body: JSON.stringify(body) }),
 
   changePassword: (body) =>
-    request("/users/change-password", { method: "PATCH", body: JSON.stringify(body) }),
+    request("/users/change-password", {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
 
   uploadAvatar: (formData) =>
     request("/users/upload-avatar", { method: "POST", body: formData }),
