@@ -9,7 +9,7 @@ import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";        // ← ADD
+import uploadRoutes from "./routes/uploadRoutes.js";       
 import { errorHandler } from "./middleware/authMiddleware.js";
 
 // ── Connect to MongoDB ─────────────────────────────────────────────────────
