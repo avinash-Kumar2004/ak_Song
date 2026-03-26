@@ -5,12 +5,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
-
+import uploadRoutes from './routes/Uploadroutes.js'
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";       
 import { errorHandler } from "./middleware/authMiddleware.js";
+
 
 // ── Connect to MongoDB ─────────────────────────────────────────────────────
 connectDB();
