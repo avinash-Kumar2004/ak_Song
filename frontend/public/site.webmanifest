@@ -1,0 +1,16 @@
+{
+  "name": "SongWave",
+  "short_name": "SongWave",
+  "description": "Music for Everyone",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
